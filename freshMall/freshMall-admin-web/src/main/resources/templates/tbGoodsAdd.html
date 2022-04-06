@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>商品信息管理</title>
+<!-- Page basic information -->
+<meta name="description" content="{{adminConfig.description}}">
+<meta name="keywords" content="{{adminConfig.keywords}}">
+<meta name="author" content="{{adminConfig.author}}">
+<!-- Page icon information -->
+<link rel="shortcut icon" href="/favicon.ico" />
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<!-- Bootstrap -->
+<link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+<!-- Font-Awesome -->
+<link rel="stylesheet" href="/plugins/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="/plugins/ionicons/css/ionicons.min.css">
+<!-- Roboto -->
+<link rel="stylesheet" href="/plugins/roboto/css/roboto.min.css">
+<!-- AdminLTE -->
+<link rel="stylesheet" href="/plugins/adminlte/css/adminlte.min.css">
+<!-- AdminLTE skins -->
+<link rel="stylesheet" href="/plugins/adminlte/css/skins/_all-skins.min.css">
+<!-- zeroModal -->
+<link rel="stylesheet" href="/plugins/zeroModal/css/zeroModal.min.css">
+<!-- iCheck -->
+<link rel="stylesheet" href="/plugins/iCheck/all.min.css">
+<!-- Paging -->
+<link rel="stylesheet" href="/plugins/tm-pagination/css/pagination.min.css">
+<!-- Kindeditor -->
+<link rel="stylesheet" href="/plugins/kindeditor/themes/default/default.css">
+<script type="text/javascript" src="/plugins/kindeditor/kindeditor-all-min.js"></script>
+<script type="text/javascript" src="/plugins/kindeditor/lang/zh_CN.js"></script>
+<!-- CustomStyle -->
+<style>.double{line-height:58px;}.title .glyphicon{padding:3px;border-radius:8px;color:#fff;font-size:13px;}.data span.arrowup{color:#d88918;}.data span.arrowdown{color:#6bb10a;}.item-blue .glyphicon{background-color:#39a9ea;}.item-green{line-height:58px;}.item-green .glyphicon{background-color:#6bb10a;line-height:9pt;}.item-orange .glyphicon{background-color:#d88918;}.item-red .glyphicon{background-color:#f14f4f;}.chart .chart-box{margin:10px;}.content-wrapper .data-type{margin:10px 5px;border:1px solid #d4d4d4;border-radius:2px;}.data-type .data,.data-type .title{overflow:hidden;padding:3px 9pt;height:42px;border-top:1px solid #d4d4d4;}.data-type .title{border-right:1px solid #d4d4d4;line-height:34px;}.data-type .data:last-child{border-right:0;}.data-type .title{background:#ececec;text-align:center;}.data-type .data .line{overflow:hidden;padding-top:10px;padding-bottom:10px;vertical-align:middle;}.data-type .data.text,.data-type .data>.form-group,.data-type .data>label{line-height:36px;}.data-type .data.border-right{border-right:1px solid #d4d4d4;}.data-type .data.rowHeight2x,.data-type .title.rowHeight2x{height:84px;}.data-type .title.rowHeight2x{line-height:78px;}.data-type .data.editer,.data-type .title.editer{height:400px;}.data-type .title.editer{line-height:400px;}.padding-clear{padding-right:0;padding-left:0;}.a-upload{position:relative;display:inline-block;overflow:hidden;padding:4px 10px;height:35px;border:1px solid #ddd;border-radius:4px;background:#fafafa;color:#888;line-height:25px;cursor:pointer;}.a-upload input{position:absolute;top:0;right:0;font-size:75pt;opacity:0;cursor:pointer;}.a-upload:hover{border-color:#ccc;background:#eee;color:#444;text-decoration:none;}</style>
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script type="text/javascript" src="/plugins/html5shiv/html5shiv.min.js"></script>
+  <script type="text/javascript" src="/plugins/respond/respond.min.js"></script>
+<![endif]-->
+</head>
+<body class="hold-transition {{adminConfig.theme}} sidebar-mini">
+<form id="addForm">
+  <section class="content">
+	  <!-- 正文的内容区域开始 -->
+	  <div class="box-body" style="padding-bottom: 0;">
+	    <!-- tab页开始 -->
+	    <div class="nav-tabs-custom" style="overflow: hidden;">
+
+	      <!-- tab头开始 -->
+	      <ul class="nav nav-tabs">
+	        <li class="active"><a href="#home" data-toggle="tab">商品信息</a> </li>
+	        <li><a href="#pic_upload" data-toggle="tab">商品图片</a></li>
+	        <li><a href="#customAttribute" data-toggle="tab">扩展属性</a></li>
+	        <li><a href="#spec" data-toggle="tab">商品规格</a></li>
+	      </ul>
+	      <!-- tab头结束 -->
+
+	      <!-- tab内容开始 -->
+	      <div class="tab-content" style="padding-bottom: 0">
+			<!-- 第一屏代码开始 -->
+			<div class="tab-pane active" id="home">
+	          <div class="row data-type">
+	            <div class="col-md-2 title">商品分类</div>
+	            <div class="col-md-10 data" style="padding: 0;padding-right: 5px">
+	              <table>
+	                <tr>
+	                  <td><select class="form-control select-sm" name="category1Id" onchange="getitemCat2();" style="height: 41px;min-width: 150px;" id="itemCat1"></select></td>
+	                  <td><select class="form-control select-sm" name="category2Id" onchange="getitemCat3();" style="height: 41px;min-width: 150px;" id="itemCat2"></select></td>
+	                  <td><select class="form-control select-sm" name="category3Id" onchange="get_type_template_id();" style="height: 41px;min-width: 150px;" id="itemCat3"></select></td>
+	                </tr>
+	              </table>
+	            </div>
+	            <div class="col-md-2 title" >模板编号</div>
+				  <!--藏值-->
+				    <input type="hidden" name="typeTemplateId" id="typeTemplateId"/>
+				    <div class="col-md-10 data" style="padding: 0;padding-right: 5px">
+					<input  style="height: 41px" type="text" class="form-control" placeholder="模板编号" id="typeTemplate-name" readonly="readonly">
+				</div>
+	            <div class="col-md-2 title">商品名称</div>
+	            <div class="col-md-10 data" style="padding: 0;padding-right: 5px"><input style="height: 41px" type="text" class="form-control" placeholder="商品名称" name="name"></div>
+	            <div class="col-md-2 title">商品卖点</div>
+	            <div class="col-md-10 data" style="padding: 0;padding-right: 5px"><input style="height: 41px"  type="text" class="form-control" placeholder="商品卖点" name="caption"></div>
+	            <div class="col-md-2 title">商品价格</div>
+	            <div class="col-md-10 data" style="padding: 0;padding-right: 5px"><div class="input-group"> <span  style="height: 41px"  class="input-group-addon">¥</span><input  style="height: 41px"  type="text" class="form-control" placeholder="商品价格" name="price"></div></div>
+	            <div class="col-md-2 title">商城产地</div>
+	            <div class="col-md-10 data" style="padding: 0;padding-right: 5px"><input style="height: 41px"  type="text" class="form-control" placeholder="商品产地" name="source"></div>
+	            <div class="col-md-2 title editer">商品介绍</div>
+	            <div class="col-md-10 data editer" style="padding: 0;padding-right: 5px">
+	              <textarea name="introduction" style="width: 100%; height: 400px; visibility: hidden;"></textarea>
+	            </div>
+	            <div class="col-md-2 title editer">包装列表</div>
+	            <div class="col-md-10 data editer" style="padding: 0;padding-right: 5px">
+	              <textarea name="packageList" style="width: 100%; height: 400px; visibility: hidden;"></textarea>
+	            </div>
+	            <div class="col-md-2 title editer">售后服务</div>
+	            <div class="col-md-10 data editer" style="padding: 0;padding-right: 5px">
+	              <textarea name="saleService" style="width: 100%; height: 400px; visibility: hidden;"></textarea>
+	            </div>
+	          </div>
+	        </div>
+			<!-- 第一屏代码结束 -->
+
+			<!-- 第二屏代码开始 -->
+			<div class="tab-pane" id="pic_upload">
+	          <div class="row data-type">
+	            <div class="btn-group">
+	              <button ng-click="image_entity={}" type="button" class="btn btn-default" title="新建" data-target="#uploadModal" data-toggle="modal" style="margin-left: 8px;margin-bottom: 10px"> <i class="fa fa-plus"></i> 添加图片 </button>
+	            </div>
+	            <table class="table table-bordered table-striped table-hover dataTable" ng-if="entity.goodsDesc.itemImages.length != 0">
+	              <thead>
+	                <tr>
+	                  <th class="sorting" style="text-align: center;vertical-align: middle;">颜色</th>
+	                  <th class="sorting" style="text-align: center;vertical-align: middle;">图片</th>
+	                  <th class="sorting" style="text-align: center;vertical-align: middle;">操作</th>
+	              </thead>
+	              <tbody id="img_tbody">
+<!--	                <tr>-->
+<!--	                  <td style="text-align: center;vertical-align: middle;">{{pojo.color}}</td>-->
+<!--	                  <td style="text-align: center;vertical-align: middle;"><img ng-src="{{pojo.url}}" width="100px" height="100px"></td>-->
+<!--	                  <td style="text-align: center;vertical-align: middle;"><button type="button" class="btn btn-danger" title="删除" ng-click="remove_image_entity($index)"> <i class="fa fa-trash-o"></i> 删除 </button></td>-->
+<!--	                </tr>-->
+	              </tbody>
+	            </table>
+	          </div>
+	        </div>
+			<!-- 第二屏代码结束 -->
+
+			<!-- 第三屏代码开始 -->
+	        <div class="tab-pane" id="customAttribute">
+	          <div class="row data-type">
+				<div id="customAttributeItems_div">
+<!--					<div class="col-md-2 title">{{pojo.text}}</div>-->
+<!--					<div class="col-md-10 data">-->
+<!--						<input class="form-control" placeholder="{{pojo.text}}" ng-model="pojo.value">-->
+<!--					</div>-->
+				</div>
+	          </div>
+	        </div>
+			<!-- 第三屏代码结束 -->
+
+			<!-- 第四屏代码开始 -->
+	        <div class="tab-pane" id="spec">
+				<div class="row data-type">
+					<div class="col-md-10 data">
+						<span id="xianshi"></span>
+						<input type="hidden" name="specificationItems" id="guige_json"/>
+					</div>
+				</div>
+	          <div>
+	              <div class="row data-type" id="data_guige">
+					<div>
+						<div class="col-md-2 title">{{pojo.text}}</div>
+						<div class="col-md-10 data" style="line-height: 42px;">
+							<span >
+								<input style="vertical-align:middle;margin-top: -6px;" type="checkbox" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()" ng-checked="checkAttributeValue(pojo.text,option.optionName)" id="{{option.optionName}}"> <label style="vertical-align:middle;" for="{{option.optionName}}">{{option.optionName}}</label> </span>
+						</div>
+	                </div>
+
+	            </div>
+
+	            <div ng-if="entity.goodsDesc.specificationItems.length != 0" class="row data-type" style="margin: 0;margin-top: 10px;border-top: 2px solid #f9f9f9;">
+	              <table class="table table-bordered table-striped table-hover dataTable">
+	                <thead id="theadStr">
+<!--	                  <tr>-->
+<!--	                    <th class="sorting" style="text-align: center;vertical-align: middle;" ng-repeat="item in entity.goodsDesc.specificationItems">{{item.attributeName}}</th>-->
+<!--	                    <th class="sorting" style="text-align: center;vertical-align: middle;">商城价格</th>-->
+<!--	                    <th class="sorting" style="text-align: center;vertical-align: middle;">库存数量</th>-->
+<!--	                    <th class="sorting" style="text-align: center;vertical-align: middle;">是否启用</th>-->
+<!--	                    <th class="sorting" style="text-align: center;vertical-align: middle;">是否默认</th>-->
+<!--	                  </tr>-->
+	                </thead>
+	                <tbody id="tbodyStr">
+<!--	              		<tr ng-repeat="pojo in entity.itemList">-->
+<!--							<td style="text-align: center;vertical-align: middle;" ng-repeat="item in entity.goodsDesc.specificationItems">{{pojo.spec[item.attributeName]}}</td>-->
+<!--							<td style="text-align: center;vertical-align: middle;"><input class="form-control" ng-model="pojo.price" placeholder="价格"></td>-->
+<!--							<td style="text-align: center;vertical-align: middle;"><input class="form-control" ng-model="pojo.num" placeholder="库存数量"></td>-->
+<!--							<td style="text-align: center;vertical-align: middle;"><input type="checkbox" ng-model="pojo.status" ng-checked="true" ng-true-value="1" ng-false-value="0"></td>-->
+<!--							<td style="text-align: center;vertical-align: middle;"><input type="checkbox" ng-model="pojo.isDefault" ng-true-value="1" ng-false-value="0"></td>-->
+<!--						</tr>-->
+	                </tbody>
+
+	              </table>
+
+					<button class="btn btn-primary" type="button" onclick="createSkuJson();"><i class="fa fa-save"></i>生成SKU的JSON数据</button>
+					<span id="skuJsonShow"></span>
+					<input type="hidden" name="skuJson" id="skuJson_inut"/>
+
+	            </div>
+	          </div>
+	        </div>
+	      	<!-- 第四屏代码结束 -->
+	      </div>
+	      <!-- tab内容结束 -->
+
+	    </div>
+	    <!-- tab页开始 -->
+
+	  </div>
+	  <!-- 正文的内容区域开始 -->
+
+	  <!-- 正文底部导航栏开始 -->
+	  <div class="btn-toolbar list-toolbar"  style="margin-left: 10px;">
+        <input type="button" value="保存商品" onclick="addGoods();"/>
+	  </div>
+	  <!-- 正文底部导航栏结束 -->
+	</section>
+</form>
+	<!-- 上传窗口 -->
+	<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h3 id="myModalLabel">上传商品图片</h3>
+	      </div>
+	      <div class="modal-body" style="padding-bottom: 0;">
+	        <table class="table table-bordered table-striped">
+	          <tr>
+	            <td style="text-align: center;vertical-align: middle;">颜色</td>
+	            <td><input class="form-control" id="img_color" placeholder="颜色"/></td>
+	          </tr>
+	          <tr>
+	            <td style="text-align: center;vertical-align: middle;">商品图片</td>
+	            <td>
+					<table>
+						<tr>
+							<div class="width:100%;height:40px;line-height:40px;clear:both">
+								<input type="file" id="file" style="display: inline-block;outline: none;">
+								<button onclick="uploadImg();" style="float: right">上传图片</button></div>
+								<div>
+									<input type="hidden" id="img_url"/>
+									<img id="upload_img" height="450px" width="100%" style="margin-top: 10px; border: 1px solid gray;">
+								</div>
+						</tr>
+					</table>
+	              </td>
+	          </tr>
+	        </table>
+	      </div>
+	      <div class="modal-footer">
+	        <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" onclick="saveImg();">保存</button>
+	        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- JQuery -->
+	<script type="text/javascript" src="/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap -->
+	<script type="text/javascript" src="/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<!-- SlimScroll -->
+	<script type="text/javascript" src="/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<!-- FastClick -->
+	<script type="text/javascript" src="/plugins/fastclick/fastclick.min.js"></script>
+	<!-- AdminLTE -->
+	<script type="text/javascript" src="/plugins/adminlte/js/adminlte.min.js"></script>
+	<!-- zeroModal -->
+	<script type="text/javascript" src="/plugins/zeroModal/js/zeroModal.min.js"></script>
+	<!-- iCheck -->
+	<script type="text/javascript" src="/plugins/iCheck/icheck.min.js"></script>
+	<!-- AngularJS -->
+	<script type="text/javascript" src="/plugins/angular/angular.min.js"></script>
+	<!-- Paging -->
+	<script type="text/javascript" src="/plugins/tm-pagination/js/pagination.min.js"></script>
+	<!-- AdminConfig -->
+	<script type="text/javascript" src="/js/adminConfig.js"></script>
+	<!-- Base -->
+	<script type="text/javascript" src="/js/base.js"></script>
+	<!-- Service -->
+	<script type="text/javascript" src="/js/service/uploadService.js"></script>
+	<script type="text/javascript" src="/js/service/tbItemCatService.js"></script>
+	<script type="text/javascript" src="/js/service/tbTypeTemplateService.js"></script>
+	<script type="text/javascript" src="/js/service/tbGoodsService.js"></script>
+	<!-- Controller -->
+	<script type="text/javascript" src="/js/controller/baseController.js"></script>
+	<script type="text/javascript" src="/js/controller/tbGoodsEditController.js"></script>
+
+	<!-- Custom -->
+	<script type="text/javascript">
+
+		var editor1;
+		var editor2;
+		var editor3;
+
+		KindEditor.ready(function(K) {
+			editor1 = K.create('textarea[name="introduction"]', {
+				allowFileManager : true,
+				//指定上传文件请求的url
+				uploadJson : '/upload/kindEditorUpload',
+				//上传类型，分别为image、flash、media、file
+				dir : "image",
+				//指定上传文件参数名称等同于<input name="file">属性
+				filePostName : 'file'
+			});
+
+			editor2 = K.create('textarea[name="packageList"]', {
+				allowFileManager : true,
+				//指定上传文件请求的url
+				uploadJson : '/upload/kindEditorUpload',
+				//上传类型，分别为image、flash、media、file
+				dir : "image",
+				//指定上传文件参数名称等同于<input name="file">属性
+				filePostName : 'file'
+			});
+			editor3 = K.create('textarea[name="saleService"]', {
+				allowFileManager : true,
+				//指定上传文件请求的url
+				uploadJson : '/upload/kindEditorUpload',
+				//上传类型，分别为image、flash、media、file
+				dir : "image",
+				//指定上传文件参数名称等同于<input name="file">属性
+				filePostName : 'file'
+			});
+		});
+
+
+		//页面加载的时候自动执行，加载下拉框
+		$(function(){
+			//查询数据库中的所有一级分类
+			$.ajax({
+				url:"/item-cat/listByParentId/0", //一级分类
+				type:"get",
+				dataType:"json",
+				success:function(result){
+					//alert(JSON.stringify(result));
+					$("#itemCat1").html("");
+					for(var i=0;i<result.data.length;i++){
+						$("#itemCat1").append("<option value=\""+result.data[i].id+"\">"+result.data[i].name+"</option>");
+					}
+					getitemCat2(); //加载2级分类
+				}
+			});
+		});
+
+
+		//加载2级分类
+		function getitemCat2(){
+			$.ajax({
+				url:"/item-cat/listByParentId/"+$("#itemCat1").val(),  //获取一级菜单的ID 其实这个ID就是二级菜单的parent_id
+				type:"get",
+				dataType:"json",
+				success:function(result){
+					//alert(JSON.stringify(result));
+					$("#itemCat2").html("");
+					for(var i=0;i<result.data.length;i++){
+						$("#itemCat2").append("<option value=\""+result.data[i].id+"\">"+result.data[i].name+"</option>");
+					}
+					getitemCat3(); //加载3级分类
+				}
+			});
+		}
+
+		//加载3级分类
+		function getitemCat3(){
+			$.ajax({
+				url:"/item-cat/listByParentId/"+$("#itemCat2").val(),  //获取二级菜单的ID 其实这个ID就是二级菜单的parent_id
+				type:"get",
+				dataType:"json",
+				success:function(result){
+					//alert(JSON.stringify(result));
+					$("#itemCat3").html("");
+					for(var i=0;i<result.data.length;i++){
+						$("#itemCat3").append("<option value=\""+result.data[i].id+"\">"+result.data[i].name+"</option>");
+					}
+					get_type_template_id(); //读取分类对应模板内容
+				}
+			});
+		}
+
+		//读取模板id和模板名称
+		function get_type_template_id(){
+			//alert($("#itemCat3").val());
+			$.ajax({
+				url:"/type-template/findByTypeTemplateId/"+$("#itemCat3").val(),
+				type:"get",
+				dataType:"json",
+				success:function(result){
+					//alert(JSON.stringify(result));
+					//显示模板
+					$("#typeTemplate-name").val(result.data.name);
+					$("#typeTemplateId").val(result.data.id);  //藏值新增到数据库
+
+					//动态加载扩展属性
+					var customAttributeItems=JSON.parse(result.data.customAttributeItems); //JSON字符串 ：[{"attrKey":"商品运费"},{"attrKey":"保质期"}]
+					$("#customAttributeItems_div").html("");
+					for(var i=0;i<customAttributeItems.length;i++){
+						var attrKey=customAttributeItems[i].attrKey;
+						$("#customAttributeItems_div").append("<div><div class=\"col-md-2 title\">"+attrKey+"</div><div class=\"col-md-10 data\"><input name=\"attrKey\" type=\"hidden\" value=\""+attrKey+"\"><input class=\"form-control\" name=\"attrValue\" placeholder=\""+attrKey+"\"></div></div> ");
+					}
+
+					//动态加载规格 ：[{"id":1001,"text":"包装方式"},{"id":1002,"text":"商品重量"},{"id":1013,"text":"饲养方式"},{"id":1011,"text":"保存状态"},{"id":1017,"text":"加工方式"}]
+					var specIds=JSON.parse(result.data.specIds);
+					$("#data_guige").html("");
+					for(var i=0;i<specIds.length;i++){
+						var specId=specIds[i].id;
+						var specName=specIds[i].text;
+
+						var str="<div><div class=\"col-md-2 title\">"+specName+"</div><div class=\"col-md-10 data\">";
+						//查询这个规格对应的选项
+						$.ajaxSettings.async = false;//把以下的Ajax设置为同步请求
+						$.getJSON("/specification-option/findSpecificationOptionBySpecId/"+specId,function (res) {
+							var specOptions=res.data;
+							//alert(JSON.stringify(specOptions));
+							for(var j=0;j<specOptions.length;j++){
+								var optionName=specOptions[j].optionName;
+								var optionId=specOptions[j].id;
+								str=str+"<span><input  type=\"checkbox\" alt=\""+optionName+"\" onclick=\"ckClick(this);\" name=\"attributeValue\" value=\""+optionId+"\"/>"+optionName+"&nbsp;&nbsp;</span>";
+							}
+							str=str+"</div></div>";
+						});
+
+						$("#data_guige").append(str);
+					}
+				}
+			});
+		}
+
+
+		//点击复选框--拼接规格选项字符串
+		var m = new Map();//集合
+		function ckClick(ck){
+			var optionId=$(ck).val(); //规格选项ID
+			var optionName=$(ck).prop("alt");
+			var guigeName=$(ck).parent().parent().prev().text();
+
+			if(m.has(guigeName)==false){
+				m.set(guigeName,"\""+optionName+"\"");
+			}else{
+				var v=m.get(guigeName);
+				m.set(guigeName,"\""+optionName+"\""+","+v);
+			}
+
+			var jsons="[";
+			var i = 1;
+			m.forEach(function (item, key, mapObj) {
+				//alert(key+ "---"+item.toString());
+				if(mapObj.size == i){
+					jsons=jsons+"{\"attrName\":\""+key+"\",\"attrValue\":["+item.toString()+"]}";
+				}else{
+					jsons=jsons+"{\"attrName\":\""+key+"\",\"attrValue\":["+item.toString()+"]},";
+				}
+				i++;
+			});
+			jsons=jsons+"]";
+
+			$("#xianshi").text(jsons); //显示值测试
+			$("#guige_json").val(jsons); //新增到数据库  藏值
+
+			var theadStr="<tr>";
+			m.forEach(function (item, key, mapObj){
+				theadStr=theadStr+"<th class=\"sorting\">"+key+"</th>";
+			});
+			theadStr=theadStr+"<th class=\"sorting\">价格</th><th class=\"sorting\">库存</th><th class=\"sorting\">是否启用</th><th class=\"sorting\">是否默认</th><th class=\"sorting\">操作</th>";
+			theadStr=theadStr+"</tr>";
+			//alert(theadStr);
+			$("#theadStr").html("");
+			$("#theadStr").append(theadStr);
+
+			var tbodyStr="<tr>";
+			m.forEach(function (item, key, mapObj){
+				tbodyStr=tbodyStr+"<td><input type=\"text\" class=\"form-control\" placeholder=\""+key+"\"/></td>";
+			});
+			tbodyStr=tbodyStr+"<td><input class=\"form-control\"  placeholder=\"价格\"></td>";
+			tbodyStr=tbodyStr+"<td><input class=\"form-control\"  placeholder=\"库存数量\"></td>";
+			tbodyStr=tbodyStr+"<td><input type=\"checkbox\" placeholder=\"是否启用\" onclick=\"clickCk(this);\" value=\"0\"></td>";
+			tbodyStr=tbodyStr+"<td><input type=\"checkbox\" placeholder=\"是否默认\" onclick=\"clickCk(this);\" value=\"0\"></td>";
+			tbodyStr=tbodyStr+"<td><button class=\"btn btn-primary btn-sm\" type=\"button\" onclick=\"cloneTr(this);\"><i class=\"fa fa-save\"></i>复制当前行</button>&nbsp;&nbsp;<button class=\"btn btn-danger btn-sm\" type=\"button\" onclick=\"deleteTr(this);\"><i class=\"fa fa-save\"></i>删除当前行</button></td>";
+			tbodyStr=tbodyStr+"</tr>";
+
+			$("#tbodyStr").html("");
+			$("#tbodyStr").append(tbodyStr);
+		}
+
+
+		//异步上传图片
+		function uploadImg(){
+			var formData = new FormData();
+			formData.append("file", document.getElementById("file").files[0]);
+			$.ajax({
+				url:"/upload/uploadImg",
+				type:"post",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success:function(result){
+					alert(JSON.stringify(result));
+					if(result.code==200){
+						$("#upload_img").prop("src",result.data);
+						$("#img_url").val(result.data);//隐藏一个URL地址
+					}else{
+						alert("文件服务器异常");
+					}
+				}
+			});
+		}
+
+		//点击图片保存--暂存图片到表格中展出
+		function saveImg(){
+			var img_url=$("#img_url").val();
+			var img_color=$("#img_color").val();
+			alert(img_color+"---"+img_url);
+			//var tr="<tr><td style=\"text-align: center;vertical-align: middle;\">"+img_color+"<input type=\"hidden\" name=\"colors\" value=\""+img_color+"\"/><input type=\"hidden\" name=\"imgurls\" value=\""+img_url+"\"/></td><td style=\"text-align: center;vertical-align: middle;\"><img alt=\"\" src=\""+img_url+"\" width=\"100px\" height=\"100px\"></td><td> <button type=\"button\" class=\"btn btn-default\" title=\"删除\" onclick=\"deleteImg(this);\"><i class=\"fa fa-trash-o\"></i>删除</button></td></tr>";
+			var tr="<tr><td style=\"text-align: center;vertical-align: middle;\">"+img_color+"<input type=\"hidden\" name=\"colors\" value=\""+img_color+"\"/><input type=\"hidden\" name=\"imgurls\" value=\""+img_url+"\"/></td><td style=\"text-align: center;vertical-align: middle;\"><img src=\""+img_url+"\" width=\"100px\" height=\"100px\"></td><td style=\"text-align: center;vertical-align: middle;\"><button type=\"button\" class=\"btn btn-danger\" title=\"删除\" onclick=\"deleteImg(this);\"> <i class=\"fa fa-trash-o\"></i> 删除 </button></td></tr>";
+			$("#img_tbody").append(tr);
+		}
+
+		//删除图片行
+		function deleteImg(btn){
+			if(confirm("是否删除当前行?")){
+				$(btn).parent().parent().remove();
+			}
+		}
+
+		function cloneTr(btn){
+			$("#tbodyStr").append($(btn).parent().parent().clone());
+		}
+
+		function deleteTr(btn){
+			$(btn).parent().parent().remove();
+		}
+
+		//生成SKUJSON
+		function createSkuJson(){
+			var skuJson = "[";
+			var trs=$("#tbodyStr").find("tr");
+			for(var i=0;i<trs.length;i++){
+				var inputs=$(trs[i]).find("input");
+				var option="{";
+				$(inputs).each(function(index,element){
+					var val=$(element).val();
+					var text=$(element).prop("placeholder");
+					//alert(text+"--"+val);
+					option=option+"\""+text+"\":\""+val+"\",";
+				});
+				option=option.substring(0,option.length-1);
+				option=option+"},";
+				skuJson=skuJson+option;
+			}
+			skuJson=skuJson.substring(0,skuJson.length-1);
+			skuJson=skuJson+"]";
+			//alert(skuJson);
+			$("#skuJsonShow").text(skuJson);
+			$("#skuJson_inut").val(skuJson);
+		}
+
+		//点击复用框
+		function clickCk(ck){
+			var status=$(ck).prop("checked");
+			if(status==true){
+				$(ck).val(1);
+			}else{
+				$(ck).val(0);
+			}
+		}
+
+		//提交商品新增表单上去
+		//新增
+		function addGoods(){
+			$("[name='introduction']").html(editor1.html()); //提取富文本编辑器中内容，存入textarea标签中
+			$("[name='packageList']").html(editor2.html()); //提取富文本编辑器中内容，存入textarea标签中
+			$("[name='saleService']").html(editor3.html()); //提取富文本编辑器中内容，存入textarea标签中
+			alert($("#addForm").serialize());
+			$.ajax({
+				url:"/goods/add",
+				type:"post",
+				dataType:"json",
+				data:$("#addForm").serialize(),
+				success:function(result){
+					//alert(JSON.stringify(result));
+					if(result.code==200){
+						alert("商品发布成功");
+						location.href="/goods/page/1";
+					}else{
+						alert("商品发布失败");
+					}
+				}
+			});
+		}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+
+    <!-- Libs CSS -->
+    <link rel="stylesheet" href="/assets/fonts/feather/feather.min.css">
+    <link rel="stylesheet" href="/assets/libs/highlight.js/styles/vs2015.css">
+    <link rel="stylesheet" href="/assets/libs/quill/dist/quill.core.css">
+    <link rel="stylesheet" href="/assets/libs/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/assets/libs/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Theme CSS -->
+      
+    <link rel="stylesheet" href="/assets/css/theme.min.css" id="stylesheetLight">
+
+    <!-- <link rel="stylesheet" href="/assets/css/theme-dark.min.css" id="stylesheetDark"> -->
+
+    <style>body { display: none; }</style>
+    
+
+    <title>果然新鲜 - 运营商后台</title>
+  </head>
+  <body class="d-flex align-items-center bg-auth" style="border-top: 6px solid #3c8dbc;">
+
+    <!-- CONTENT
+    ================================================== -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-5 col-xl-4 my-5">
+          
+          <!-- Heading -->
+          <h1 class="display-4 text-center mb-3">
+            	欢 迎 登 录
+          </h1>
+          
+          <!-- Subheading -->
+          <p class="text-muted text-center mb-5">
+            	运营商后台管理系统
+          </p>
+          
+          <!-- Form -->
+          <form action="/login"  method="post">
+
+            <!-- Email address -->
+            <div class="form-group">
+
+              <!-- Label -->
+              <label>管理员账户</label>
+
+              <!-- Input -->
+              <input name="username" type="text"  class="form-control" placeholder="请输入账户">
+
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+
+              <div class="row">
+                <div class="col">
+                      
+                  <!-- Label -->
+                  <label>管理员密码</label>
+
+                </div>
+              </div> <!-- / .row -->
+
+              <!-- Input group -->
+              <div class="input-group input-group-merge">
+
+                <!-- Input -->
+                <input name="password" type="password" class="form-control form-control-appended" placeholder="请输入密码">
+
+                <!-- Icon -->
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fe fe-eye"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+
+              <div class="row">
+                <div class="col">
+
+                  <!-- Label -->
+                  <label>验证码</label>
+
+                </div>
+              </div> <!-- / .row -->
+              <!-- Input group -->
+              <div class="input-group input-group-merge">
+                <!-- Input -->
+                <input name="checkCode" type="text" style="width: 40px;" class="form-control form-control-appended" placeholder="请输入验证码"/>
+                <img src="/getCode"  style="width: 130px;height: 40px" onclick="changeCheckCode(this)" />
+                <!-- Icon -->
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fe fe-eye"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <span style="color: red" th:text="${msg}"></span>
+            <!-- Submit -->
+            <button class="btn btn-lg btn-block btn-primary mb-3">
+              	登 录
+            </button>
+          </form>
+        </div>
+      </div> <!-- / .row -->
+    </div> <!-- / .container -->
+
+    <!-- JAVASCRIPT
+    ================================================== -->
+    <!-- Libs JS -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/libs/chart.js/dist/Chart.min.js"></script>
+    <script src="/assets/libs/highlightjs/highlight.pack.min.js"></script>
+    <script src="/assets/libs/flatpickr/dist/flatpickr.min.js"></script>
+    <script src="/assets/libs/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="/assets/libs/list.js/dist/list.min.js"></script>
+    <script src="/assets/libs/quill/dist/quill.min.js"></script>
+    <script src="/assets/libs/dropzone/dist/min/dropzone.min.js"></script>
+    <script src="/assets/libs/select2/dist/js/select2.min.js"></script>
+    <script src="/assets/libs/chart.js/Chart.extension.min.js"></script>
+
+    <!-- Theme JS -->
+    <script src="/assets/js/theme.min.js"></script>
+
+    <script type="text/javascript">
+
+      //图片点击事件
+      function changeCheckCode(img) {
+        img.src="/getCode?"+new Date().getTime();
+        //拼接时间，是为了可以一直刷新验证码，也可以用其他随机数
+      }
+
+    </script>
+
+  </body>
+
+<!-- Mirrored from dashkit.goodthemes.co/sign-in.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Mar 2019 08:34:39 GMT -->
+</html>

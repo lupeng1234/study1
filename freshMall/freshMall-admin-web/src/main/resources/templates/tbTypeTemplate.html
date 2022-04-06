@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>模板管理</title>
+<!-- Page basic information -->
+<meta name="description" content="{{adminConfig.description}}">
+<meta name="keywords" content="{{adminConfig.keywords}}">
+<meta name="author" content="{{adminConfig.author}}">
+<!-- Page icon information -->
+<link rel="shortcut icon" href="/favicon.ico" />
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<!-- Bootstrap -->
+<link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+<!-- Font-Awesome -->
+<link rel="stylesheet" href="/plugins/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="/plugins/ionicons/css/ionicons.min.css">
+<!-- Roboto -->
+<link rel="stylesheet" href="/plugins/roboto/css/roboto.min.css">
+<!-- AdminLTE -->
+<link rel="stylesheet" href="/plugins/adminlte/css/adminlte.min.css">
+<!-- AdminLTE skins -->
+<link rel="stylesheet" href="/plugins/adminlte/css/skins/_all-skins.min.css">
+<!-- zeroModal -->
+<link rel="stylesheet" href="/plugins/zeroModal/css/zeroModal.min.css">
+<!-- iCheck -->
+<link rel="stylesheet" href="/plugins/iCheck/all.min.css">
+<!-- Paging -->
+<link rel="stylesheet" href="/plugins/tm-pagination/css/pagination.min.css">
+<!-- Select2 -->
+<link rel="stylesheet" href="/plugins/select2/select2.css">
+<link rel="stylesheet" href="/plugins/select2/select2-bootstrap.css">
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script type="text/javascript" src="/plugins/html5shiv/html5shiv.min.js"></script>
+  <script type="text/javascript" src="/plugins/respond/respond.min.js"></script>
+<![endif]-->
+</head>
+<body class="hold-transition {{adminConfig.theme}} sidebar-mini">
+	<!-- Page Wrapper Start -->
+	<div class="wrapper">
+		<!-- Box Header Start -->
+		<div class="box-header with-border">
+			<ul class="breadcrumb" style="margin-bottom: 0px;">
+				<li><a href="javascript:;" onclick="window.location.href='welcome.html';">后台首页</a></li>
+				<li><a href="javascript:;" onclick="window.location.reload();">模板管理</a></li>
+			</ul>
+		</div>
+		<!-- Box Header End -->
+
+		<!-- Box Body Start -->
+		<div class="box-body">
+			<!-- Tool Start -->
+			<div class="clearfix" style="margin-bottom: 10px">
+				<div class="pull-left">
+					<div class="input-group input-group-sm">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#addModal" ng-click="entity={'customAttributeItems':[]}">
+								<i class="fa fa-plus"></i> 新建
+							</button>
+							<button type="button" class="btn btn-default" title="删除" ng-click="deleteList()">
+								<i class="fa fa-trash"></i> 删除
+							</button>
+							<button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();">
+								<i class="fa fa-refresh"></i> 刷新
+							</button>
+						</div>
+					</div>
+				</div>
+				<form id="queryForm">
+				<div class="pull-right">
+					<div class="input-group input-group-sm" style="width: 150px;">
+						<input type="text" class="form-control pull-right" name="name" th:value="${name}" placeholder="模板名称">
+
+						<div class="input-group-btn">
+							<button type="submit" class="btn btn-default">
+								<i class="fa fa-search"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				</form>
+			</div>
+			<!-- Tool End -->
+
+			<!-- Data Start -->
+			<table class="table table-bordered table-striped table-hover dataTable">
+				<thead>
+					<tr>
+						<td style="vertical-align: middle; text-align: center;"></td>
+						<th style="vertical-align: middle; text-align: left;">模板编号</th>
+						<th style="vertical-align: middle; text-align: left;">模板名称</th>
+						<th style="vertical-align: middle; text-align: left;">关联规格</th>
+						<th style="vertical-align: middle; text-align: left;">自定义属性</th>
+						
+						<th style="vertical-align: middle; text-align: center;">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				<tr th:each="template:${pageUtils.records}">
+						<td style="vertical-align: middle; text-align: center;"><input type="checkbox" ng-click="selectOne($event,entity.id)" style="width: 16px; height: 16px; cursor: pointer;"></td>
+						<td style="vertical-align: middle;" th:text="${template.id}">{{entity.id}}</td>
+						<td style="vertical-align: middle;" th:text="${template.name}">{{entity.name}}</td>
+						<td style="vertical-align: middle;" th:text="${template.specIds}">{{jsonToString(entity.specIds,'text')}}</td>
+						<td style="vertical-align: middle;" th:text="${template.customAttributeItems}">{{jsonToString(entity.customAttributeItems,'text')}}</td>
+						
+						<td style="vertical-align: middle; text-align: center;">
+							<button class="btn btn-sm bg-light-blue color-palette" data-toggle="modal" data-target="#editModal" th:onclick="|goUpdate(${template.id});|">修改</button>
+							<button class="btn btn-sm bg-red color-palette" ng-click="deleteOne(entity.id)">删除</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- Data End -->
+			<!-- 分页组件 -->
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="dataTables_paginate paging_bootstrap" id="sample-table_paginate">
+						<ul class="pagination">
+							<li class="prev" th:if="${pageUtils.pageIndex>1}"><a href="#"
+																				 th:onclick="'goPage('+${pageUtils.pageIndex-1}+')'">上一页</a>
+							</li>
+							<li th:each="num:${pageUtils.numbers}" th:class="${pageUtils.pageIndex==num}? active"><a
+									href="#" th:onclick="'goPage('+${num}+')'" th:text="${num}">1</a></li>
+							<li class="next" th:if="${pageUtils.pageIndex<pageUtils.pageCount}"><a href="#"
+																								   th:onclick="'goPage('+${pageUtils.pageIndex+1}+')'">下一页</a>
+							</li>
+							<li class="next"><a href="#" th:text="|共${pageUtils.pageCount}页|">XX</a></li>
+							<li class="next"><a href="#" th:text="|共${pageUtils.totalCount}条|">XX</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- 分页组件 -->
+			<!-- Paging Start -->
+			<div class="clearfix">
+				<div class="pull-left">
+					<tm-pagination conf="paginationConf"></tm-pagination>
+				</div>
+				<div class="pull-right" style="height: 70px; line-height: 70px;">
+					<button class="btn btn-sm btn-default" onclick="window.print();">打印</button>
+				</div>
+			</div>
+			<!-- Paging End -->
+		</div>
+		<!-- Box Body End -->
+
+		<!-- Modal Start -->
+		<form id="updateForm">
+			<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title">
+								<small>模板编辑</small>
+							</h4>
+						</div>
+						<div class="modal-body">
+							<table class="table table-bordered table-striped table-hover dataTable" width="800px" style="margin-bottom: 0px;">
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">模板名称</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<input type="hidden" name="id" id="id_update"/>
+										<input type="text" class="form-control" name="name" id="name_update" placeholder="模板名称">
+									</td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">关联规格</td>
+									<td style="vertical-align: middle; text-align: left;" id="specs_update">
+
+									</td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">自定义属性</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<div class="btn-group"><button type="button" class="btn btn-default" title="新增扩展属性" style="margin-bottom: 10px" onclick="update_custom_attribute_items_add();"><i class="fa fa-file-o"></i> 新增扩展属性</button></div>
+										<table class="table table-bordered" style="margin-bottom: 0px;">
+											<thead>
+											<tr>
+												<td>属性名称</td>
+												<td>操作</td>
+											</tr>
+											</thead>
+											<tbody id="tbody_custom_attribute_items_update">
+											  
+											</tbody>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default pull-left" data-dismiss="modal" aria-hidden="true">关闭</button>
+							<button type="button" class="btn btn-success pull-right" data-dismiss="modal" aria-hidden="true" onclick="updateTypeTemplate();">保存</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<!-- Modal End -->
+
+		<!--新增-->
+		<form id="addForm">
+			<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title">
+								<small>模板新增</small>
+							</h4>
+						</div>
+						<div class="modal-body">
+							<table class="table table-bordered table-striped table-hover dataTable" width="800px" style="margin-bottom: 0px;">
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">模板名称</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<input type="text" class="form-control" name="name" placeholder="模板名称">
+									</td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">关联规格</td>
+									<td style="vertical-align: middle; text-align: left;" id="specs_add">
+										<!--异步绑定规格复选框-->
+									</td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">自定义属性</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<div class="btn-group"><button type="button" class="btn btn-default" title="新增扩展属性" style="margin-bottom: 10px" onclick="add_custom_attribute_items_add();"><i class="fa fa-file-o"></i> 新增扩展属性</button></div>
+										<table class="table table-bordered" style="margin-bottom: 0px;">
+											<thead>
+											<tr>
+												<td>属性名称</td>
+												<td>操作</td>
+											</tr>
+											</thead>
+											<tbody id="tbody_custom_attribute_items">
+
+											</tbody>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default pull-left" data-dismiss="modal" aria-hidden="true">取消</button>
+							<button type="button" class="btn btn-success pull-right" data-dismiss="modal" aria-hidden="true" onclick="addTypeTemplate()">模板新增</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+	</div>
+
+	<!-- Page Wrapper End -->
+	<!-- JQuery -->
+	<script type="text/javascript" src="/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap -->
+	<script type="text/javascript" src="/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<!-- SlimScroll -->
+	<script type="text/javascript" src="/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<!-- FastClick -->
+	<script type="text/javascript" src="/plugins/fastclick/fastclick.min.js"></script>
+	<!-- AdminLTE -->
+	<script type="text/javascript" src="/plugins/adminlte/js/adminlte.min.js"></script>
+	<!-- zeroModal -->
+	<script type="text/javascript" src="/plugins/zeroModal/js/zeroModal.min.js"></script>
+	<!-- iCheck -->
+	<script type="text/javascript" src="/plugins/iCheck/icheck.min.js"></script>
+	<!-- AngularJS -->
+	<script type="text/javascript" src="/plugins/angular/angular.min.js"></script>
+	<!-- Paging -->
+	<script type="text/javascript" src="/plugins/tm-pagination/js/pagination.min.js"></script>
+	<!-- AdminConfig -->
+	<script type="text/javascript" src="/js/adminConfig.js"></script>
+	<!-- Base -->
+	<script type="text/javascript" src="/js/base_pagination.js"></script>
+	<!-- Select2 -->
+	<script type="text/javascript" src="/plugins/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/js/angular-select2.js"></script>
+	<!-- Service -->
+	<script type="text/javascript" src="/js/service/tbSpecificationService.js"></script>
+	<script type="text/javascript" src="/js/service/tbTypeTemplateService.js"></script>
+	<!-- Controller -->
+	<script type="text/javascript" src="/js/controller/baseController.js"></script>
+	<script type="text/javascript" src="/js/controller/tbTypeTemplateController.js"></script>
+
+	<script type="text/javascript">
+		//跳转页面
+		function goPage(pageIndex) {
+			$("#queryForm").attr("action", "/type-template/page/" + pageIndex);
+			$("#queryForm").submit();
+		}
+
+		$(function () {
+			//页面加载
+			getspecifications();
+		});
+
+
+		//新增时 规格 异步绑定界面回显的数据
+		function getspecifications() {
+			$.getJSON("/specification/list", function (result) {
+				//加载规格specs_add
+				var specifications = result.data;
+				$("#specs_add").text(""); //置空
+				for (var i = 0; i < specifications.length; i++) {
+					//绑定品牌数据
+					if ((i + 1) % 5 == 0) {
+						$("#specs_add").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].specName + "<br/>");
+					} else {
+						$("#specs_add").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].specName + "&nbsp;&nbsp;");
+					}
+				}
+			});
+		}
+
+		//添加时 新增扩展属性行
+		function add_custom_attribute_items_add() {
+			$("#tbody_custom_attribute_items").append("<tr><td><input class=\"form-control\" placeholder=\"属性名称\" name=\"attribute_items\"/></td><td><button type=\"button\" class=\"btn btn-default\" title=\"删除\" onclick=\"add_custom_attribute_items_delete(this);\"><i class=\"fa fa-trash-o\"></i> 删除</button></td></tr>");
+		}
+
+		//新增时 删除所在的行
+		function add_custom_attribute_items_delete(btn) {
+			if ($("#tbody_custom_attribute_items").find("tr").length > 1) {
+				$(btn).parent().parent().remove();
+			} else {
+				alert("不能再删除啦，小弟,至少有一个扩展属性!")
+			}
+		}
+
+		//新增模板表单
+		function addTypeTemplate() {
+			var data = $("#addForm").serialize();
+			$.ajax({
+				url: "/type-template/add",
+				data: data,
+				type: "post",
+				dataType: "json",
+				success: function (result) {
+					//alert(JSON.stringify(result));
+					if (result.code == 200) {
+						alert("新增成功");
+						location.href = "/type-template/page/1";
+					} else {
+						alert(result.message);
+					}
+				}
+			});
+		}
+
+		//更新页面数据回显
+		function goUpdate(id) {
+			$.getJSON("/type-template/findById/"+id, function (result) {
+				//alert(JSON.stringify(result));
+
+				//回显数据
+				var typeTemplate = result.data.typeTemplate;
+				$("#id_update").val(typeTemplate.id); //藏值
+				$("#name_update").val(typeTemplate.name);
+
+				// [{"id":1011,"text":"保存状态"},{"id":1013,"text":"饲养方式"}]
+				var specIdsJsonObject=JSON.parse(typeTemplate.specIds);
+
+				//规格
+				$.getJSON("/specification/list", function (result) {
+					//加载规格specs_add
+					var specifications = result.data;
+					$("#specs_update").text(""); //置空
+					for (var i = 0; i < specifications.length; i++) {
+						//绑定品牌数据
+						if ((i + 1) % 5 == 0) {
+							if(isExsist(specIdsJsonObject,specifications[i].id)==true){
+								$("#specs_update").append("<input checked type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].specName + "<br/>");
+							}else{
+								$("#specs_update").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].specName + "<br/>");
+							}
+						} else {
+							if(isExsist(specIdsJsonObject,specifications[i].id)==true){
+								$("#specs_update").append("<input checked type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].specName + "&nbsp;&nbsp;");
+							}else{
+								$("#specs_update").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].specName + "&nbsp;&nbsp;");
+							}
+						}
+					}
+				});
+
+				//扩展属性
+				var attribute_items_beans = result.data.attribute_items_beans;
+				$("#tbody_custom_attribute_items_update").text(""); //置空
+				for (var i = 0; i < attribute_items_beans.length; i++) {
+					$("#tbody_custom_attribute_items_update").append("<tr><td><input class=\"form-control\" placeholder=\"属性名称\" name=\"attribute_items\" value=\"" + attribute_items_beans[i].attrKey + "\"/></td><td><button type=\"button\" class=\"btn btn-default\" title=\"删除\" onclick=\"update_custom_attribute_items_delete(this);\"><i class=\"fa fa-trash-o\"></i> 删除</button></td></tr>");
+				}
+			});
+		}
+		
+		
+		function update_custom_attribute_items_add() {
+			$("#tbody_custom_attribute_items_update").append("<tr><td><input class=\"form-control\" placeholder=\"属性名称\" name=\"attribute_items\"/></td><td><button type=\"button\" class=\"btn btn-default\" title=\"删除\" onclick=\"update_custom_attribute_items_delete(this);\"><i class=\"fa fa-trash-o\"></i> 删除</button></td></tr>");
+		}
+		
+		function update_custom_attribute_items_delete(btn) {
+			if ($("#tbody_custom_attribute_items_update").find("tr").length > 1) {
+				$(btn).parent().parent().remove();
+			} else {
+				alert("不能再删除啦，小弟,至少有一个扩展属性!")
+			}
+		}
+
+		function isExsist(specIdsJsonObject,specId) {
+			var flag=false;
+			for(var i=0;i<specIdsJsonObject.length;i++){
+				var spec_Id=specIdsJsonObject[i].id;
+				if(spec_Id==specId){
+					flag=true;
+					break;
+				}
+			}
+			return flag;
+		}
+
+
+		//更新模板表单
+		function updateTypeTemplate() {
+			var data = $("#updateForm").serialize();
+			$.ajax({
+				url: "/type-template/update",
+				data: data,
+				type: "post",
+				dataType: "json",
+				success: function (result) {
+					//alert(JSON.stringify(result));
+					if (result.code == 200) {
+						alert("更新成功");
+						location.href = "/type-template/page/1";
+					} else {
+						alert(result.message);
+					}
+				}
+			});
+		}
+
+	</script>
+</body>
+</html>

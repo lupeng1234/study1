@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>规格明细</title>
+<!-- Page basic information -->
+<meta name="description" content="{{adminConfig.description}}">
+<meta name="keywords" content="{{adminConfig.keywords}}">
+<meta name="author" content="{{adminConfig.author}}">
+<!-- Page icon information -->
+<link rel="shortcut icon" href="/favicon.ico" />
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<!-- Bootstrap -->
+<link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+<!-- Font-Awesome -->
+<link rel="stylesheet" href="/plugins/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="/plugins/ionicons/css/ionicons.min.css">
+<!-- Roboto -->
+<link rel="stylesheet" href="/plugins/roboto/css/roboto.min.css">
+<!-- AdminLTE -->
+<link rel="stylesheet" href="/plugins/adminlte/css/adminlte.min.css">
+<!-- AdminLTE skins -->
+<link rel="stylesheet" href="/plugins/adminlte/css/skins/_all-skins.min.css">
+<!-- zeroModal -->
+<link rel="stylesheet" href="/plugins/zeroModal/css/zeroModal.min.css">
+<!-- iCheck -->
+<link rel="stylesheet" href="/plugins/iCheck/all.min.css">
+<!-- Paging -->
+<link rel="stylesheet" href="/plugins/tm-pagination/css/pagination.min.css">
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script type="text/javascript" src="/plugins/html5shiv/html5shiv.min.js"></script>
+  <script type="text/javascript" src="/plugins/respond/respond.min.js"></script>
+<![endif]-->
+</head>
+<body class="hold-transition {{adminConfig.theme}} sidebar-mini">
+	<!-- Page Wrapper Start -->
+	<div class="wrapper">
+		<!-- Box Header Start -->
+		<div class="box-header with-border">
+			<ul class="breadcrumb" style="margin-bottom: 0px;">
+				<li><a href="javascript:;" onclick="window.location.href='welcome.html';">后台首页</a></li>
+				<li><a href="javascript:;" onclick="window.location.reload();">规格明细</a></li>
+			</ul>
+		</div>
+		<!-- Box Header End -->
+
+		<!-- Box Body Start -->
+		<div class="box-body">
+			<!-- Tool Start -->
+			<div class="clearfix" style="margin-bottom: 10px">
+				<div class="pull-left">
+					<div class="input-group input-group-sm">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#addModal" ng-click="entity={}">
+								<i class="fa fa-plus"></i> 新建
+							</button>
+							<button type="button" class="btn btn-default" title="删除" ng-click="deleteList()">
+								<i class="fa fa-trash"></i> 删除
+							</button>
+							<button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();">
+								<i class="fa fa-refresh"></i> 刷新
+							</button>
+						</div>
+					</div>
+				</div>
+				<form id="queryForm">
+					<div class="pull-right">
+						<div class="input-group input-group-sm" style="width: 150px;">
+							<input type="text" class="form-control pull-right" name="optionName" placeholder="规格项编号" th:value="${optionName}">
+
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-default">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<!-- Tool End -->
+
+			<!-- Data Start -->
+			<table class="table table-bordered table-striped table-hover dataTable">
+				<thead>
+					<tr>
+						<td style="vertical-align: middle; text-align: center;"></td>
+						<th style="vertical-align: middle; text-align: left;">规格项编号</th>
+						<th style="vertical-align: middle; text-align: left;">规格项名称</th>
+						<th style="vertical-align: middle; text-align: left;">规格项顺序</th>
+						<th style="vertical-align: middle; text-align: left;">规格编号</th>
+						
+						<th style="vertical-align: middle; text-align: center;">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				<tr th:each="specificationOption:${pageUtils.records}">
+						<td style="vertical-align: middle; text-align: center;"><input type="checkbox" ng-click="selectOne($event,entity.id)" style="width: 16px; height: 16px; cursor: pointer;"></td>
+						<td style="vertical-align: middle;" th:text="${specificationOption.id}">{{entity.id}}</td>
+						<td style="vertical-align: middle;" th:text="${specificationOption.optionName}">{{entity.optionName}}</td>
+						<td style="vertical-align: middle;" th:text="${specificationOption.sortOrder}">{{entity.sortOrder}}</td>
+						<td style="vertical-align: middle;" th:text="${specificationOption.specId}">{{entity.specId}}</td>
+						<td style="vertical-align: middle; text-align: center;">
+							<button class="btn btn-sm bg-light-blue color-palette" data-toggle="modal" data-target="#editModal" th:onclick="|goUpdate(${specificationOption.id});|">修改</button>
+							<button class="btn btn-sm bg-red color-palette" ng-click="deleteOne(entity.id)">删除</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- Data End -->
+			<!-- 分页组件 -->
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="dataTables_paginate paging_bootstrap" id="sample-table_paginate">
+						<ul class="pagination">
+							<li class="prev" th:if="${pageUtils.pageIndex>1}"><a href="#"
+																				 th:onclick="'goPage('+${pageUtils.pageIndex-1}+')'">上一页</a>
+							</li>
+							<li th:each="num:${pageUtils.numbers}" th:class="${pageUtils.pageIndex==num}? active"><a
+									href="#" th:onclick="'goPage('+${num}+')'" th:text="${num}">1</a></li>
+							<li class="next" th:if="${pageUtils.pageIndex<pageUtils.pageCount}"><a href="#"
+																								   th:onclick="'goPage('+${pageUtils.pageIndex+1}+')'">下一页</a>
+							</li>
+							<li class="next"><a href="#" th:text="|共${pageUtils.pageCount}页|">XX</a></li>
+							<li class="next"><a href="#" th:text="|共${pageUtils.totalCount}条|">XX</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- 分页组件 -->
+
+			<!-- Paging Start -->
+			<div class="clearfix">
+				<div class="pull-left">
+					<tm-pagination conf="paginationConf"></tm-pagination>
+				</div>
+				<div class="pull-right" style="height: 70px; line-height: 70px;">
+					<button class="btn btn-sm btn-default" onclick="window.print();">打印</button>
+				</div>
+			</div>
+			<!-- Paging End -->
+		</div>
+		<!-- Box Body End -->
+
+		<!-- Modal Start -->
+		<form id="addForm">
+			<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title">
+								<small>规格项新增</small>
+							</h4>
+						</div>
+						<div class="modal-body">
+							<table class="table table-bordered table-striped table-hover dataTable" width="800px" style="margin-bottom: 0px;">
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">规格项名称</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<input type="text" class="form-control" name="optionName" placeholder="规格项名称"></td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">规格项顺序</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<input type="text" class="form-control" name="sortOrder" placeholder="规格项顺序"></td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle; text-align: center;">规格主键</td>
+									<td style="vertical-align: middle; text-align: left;">
+										<select name="specId" id="specId_add" class="form-control">
+
+										</select>
+									</td>
+								</tr>
+
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default pull-left" data-dismiss="modal" aria-hidden="true">关闭</button>
+							<button type="button" class="btn btn-success pull-right" data-dismiss="modal" aria-hidden="true" onclick="addSpecificationOption();">新增规格选项</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<!-- Modal End -->
+
+		<!-- Modal Start -->
+		<form id="updateForm">
+		<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">
+							<small>规格项编辑</small>
+						</h4>
+					</div>
+					<div class="modal-body">
+						<table class="table table-bordered table-striped table-hover dataTable" width="800px" style="margin-bottom: 0px;">
+							<tr>
+								<td style="vertical-align: middle; text-align: center;">规格项名称</td>
+								<td style="vertical-align: middle; text-align: left;">
+									<input type="hidden" name="id" id="id_update"/>
+									<input type="text" class="form-control" name="optionName" id="option_name_update" placeholder="规格项名称"></td>
+							</tr>
+							<tr>
+								<td style="vertical-align: middle; text-align: center;">规格项顺序</td>
+								<td style="vertical-align: middle; text-align: left;">
+									<input type="text" class="form-control" name="sortOrder" id="sortOrder_update" placeholder="规格项顺序">
+								</td>
+							</tr>
+							<tr>
+								<td style="vertical-align: middle; text-align: center;">规格主键</td>
+								<td style="vertical-align: middle; text-align: left;">
+									<select name="specId" id="specId_update" class="form-control">
+
+									</select>
+								</td>
+							</tr>
+
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default pull-left" data-dismiss="modal" aria-hidden="true">关闭</button>
+						<button type="button" class="btn btn-success pull-right" data-dismiss="modal" aria-hidden="true" onclick="updateSpecificationOption()">更新规格选项</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</form>
+		<!-- Modal End -->
+	</div>
+	<!-- Page Wrapper End -->
+	<!-- JQuery -->
+	<script type="text/javascript" src="/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap -->
+	<script type="text/javascript" src="/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<!-- SlimScroll -->
+	<script type="text/javascript" src="/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<!-- FastClick -->
+	<script type="text/javascript" src="/plugins/fastclick/fastclick.min.js"></script>
+	<!-- AdminLTE -->
+	<script type="text/javascript" src="/plugins/adminlte/js/adminlte.min.js"></script>
+	<!-- zeroModal -->
+	<script type="text/javascript" src="/plugins/zeroModal/js/zeroModal.min.js"></script>
+	<!-- iCheck -->
+	<script type="text/javascript" src="/plugins/iCheck/icheck.min.js"></script>
+	<!-- AngularJS -->
+	<script type="text/javascript" src="/plugins/angular/angular.min.js"></script>
+	<!-- Paging -->
+	<script type="text/javascript" src="/plugins/tm-pagination/js/pagination.min.js"></script>
+	<!-- AdminConfig -->
+	<script type="text/javascript" src="/js/adminConfig.js"></script>
+	<!-- Base -->
+	<script type="text/javascript" src="/js/base_pagination.js"></script>
+	<!-- Service -->
+	<script type="text/javascript" src="/js/service/tbSpecificationOptionService.js"></script>
+	<!-- Controller -->
+	<script type="text/javascript" src="/js/controller/baseController.js"></script>
+	<script type="text/javascript" src="/js/controller/tbSpecificationOptionController.js"></script>
+
+    <script type="text/javascript">
+
+		//跳转页面
+		function goPage(pageIndex) {
+			$("#queryForm").attr("action", "/specification-option/page/" + pageIndex);
+			$("#queryForm").submit();
+		}
+
+		$(function () {
+			//加载绑定规格下拉框
+			$.getJSON("/specification/list",function (result){
+				//alert(JSON.stringify(result));
+				if(result.code==200){
+					var datas=result.data;
+					for(var i=0;i<datas.length;i++){
+						var specification=datas[i];
+						$("#specId_add").append(("<option value='"+specification.id+"'>"+specification.specName+"</option>"));
+					}
+				}
+			});
+		});
+
+		//新增规格
+		function addSpecificationOption() {
+			var data=$("#addForm").serialize();
+			$.ajax({
+				url:"/specification-option/add",
+				data:data,
+				type:"post",
+				dataType:"json",
+				success:function (result) {
+					//alert(JSON.stringify(result));
+					if(result.code==200){
+						alert("新增成功");
+						location.href="/specification-option/page/1";
+					}else{
+						alert("服务器异常......");
+					}
+				}
+			});
+		}
+
+		//跳转更新
+		function goUpdate(id) {
+
+			$.getJSON("/specification-option/getById/"+id,function (res) {
+				alert(JSON.stringify(res));
+				//隐藏ID
+				$("#id_update").val(res.data.id);
+				$("#option_name_update").val(res.data.optionName);
+				$("#sortOrder_update").val(res.data.sortOrder);
+				//置空
+				$("#specId_update").html("");
+
+				$.getJSON("/specification/list",function (result){
+					//alert(JSON.stringify(result));
+					if(result.code==200){
+						var datas=result.data;
+						for(var i=0;i<datas.length;i++){
+							var specification=datas[i];
+							$("#specId_update").append(("<option value='"+specification.id+"'>"+specification.specName+"</option>"));
+						}
+						$("#specId_update").val(res.data.specId);
+					}
+				});
+
+			});
+		}
+
+		//更新规格
+		function updateSpecificationOption() {
+			var data=$("#updateForm").serialize();
+			alert(data);
+			$.ajax({
+				url:"/specification-option/update",
+				data:data,
+				type:"post",
+				dataType:"json",
+				success:function (result) {
+					//alert(JSON.stringify(result));
+					if(result.code==200) {
+						alert("更新成功");
+						location.href = "/specification-option/page/1";
+					} else{
+						alert("服务器异常......");
+					}
+				}
+			});
+		}
+
+	</script>
+</body>
+</html>
